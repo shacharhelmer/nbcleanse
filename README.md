@@ -8,9 +8,16 @@ It's a script that cleans [notebooks](https://jupyter.org/) of "redundant compon
 ## Why?
 
 Because notebooks ARE code and whatever goes into your codebase should be as lean as possible.  
+Many IDEs which implement a notebook inteface (VScode, Jetbrains and etc.) add data to notebooks files in order to provide some functionalities. And that's a problem:  
 
-Many IDEs which implement a notebook inteface (VScode, Jetbrains and etc.) add data to notebooks files in order to provide some functionalities.  
-That said data clutters the notebooks files, is not consistant across IDEs and could even cause failures if it contains dependency assumptions and is committed to a VCS.  
+**It makes code reviews more difficult**  
+Notebook outputs clutter file data. Even with services such as reviewNB which allow simpler code reviews on notebook, cell outputs create a lot of false positive code changes.  
+
+**It is not consistant across IDEs**  
+Different IDEs can override the same settings causign unexpected behaviour.  
+
+**It is not consistant across developers**  
+The added settings can contain assumptions about dependencies that are computer-specific (conda environment, package versions). This can create conflicts when others pull the repo.
 
 ## Why nbcleanse?
 
