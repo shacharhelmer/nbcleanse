@@ -5,7 +5,7 @@ __all__ = ['Notebook', 'nbcleanse']
 
 # %% ../notebooks/nb_definition.ipynb 3
 from nbformat import NotebookNode
-from nbformat import read as read_nb, write as write_nb, from_dict
+from nbformat import read as read_nb, write as write_nb, validate as validate_nb, from_dict
 import jq
 
 # %% ../notebooks/nb_definition.ipynb 5
@@ -38,7 +38,7 @@ class Notebook:
         write_nb(self.nb, path)
         
 
-# %% ../notebooks/nb_definition.ipynb 8
+# %% ../notebooks/nb_definition.ipynb 11
 from fastcore.script import call_parse, Param
 from pathlib import Path
 
