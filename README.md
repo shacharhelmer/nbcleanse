@@ -36,3 +36,17 @@ Then run:
 cd your/notebooks/dir/
 nbcleanse
 ```
+
+## Can it do this or that?
+
+It might! Consider the following examples:
+
+```bash
+```
+
+```bash
+```
+
+## It'd be nice if it could do this or the other thing...
+
+Any suggesstions are welcome. Please open an issue or a PR explaining your idea!  
