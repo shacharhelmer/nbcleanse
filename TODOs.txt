@@ -1,0 +1,6 @@
+- consider having a notebook a subclass(type?) of dict
+- have a method to scan all existing components of a notebook
+- enable entering target dirs for notebooks
+- enable cleaning a notebook completely (requires defining what is the base form of a notebook)
+- consider how should slicing a nb look like (jq format is a good candidate, but maybe other formats should be supported)
+- enable insights into a nb (maybe equivalent to a check, but report how many lines are redundant, unique values etc)
