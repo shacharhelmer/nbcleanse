@@ -27,10 +27,8 @@ Because it's lightweight, configureable and let's you know how many lines of cod
 
 First Install:
 ```bash
-git pull origin shacharhelmer/nbcleanse # soon to be found on pip
-cd nbcleanse && pip install .
+pip install nbcleanse
 ```
-
 Then run:
 ```bash
 cd your/notebooks/dir/
@@ -39,12 +37,23 @@ nbcleanse
 
 ## Can it do this or that?
 
-It might! Consider the following examples:
+It might! Currently supported features are:
 
 ```bash
-```
+# cleans all metadata from all notebooks in cwd
+nbcleanse -m
 
-```bash
+# cleans all outputs
+nbcleanse -o
+
+# cleans all cell execution counts
+nbcleanse -e
+
+# quiet mode
+nbcleanse -q
+
+# flags are additive
+nbcleanse -moeq
 ```
 
 ## It'd be nice if it could do this or the other thing...
