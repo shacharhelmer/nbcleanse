@@ -6,24 +6,33 @@ __all__ = ['parser', 'nbcleanse', 'main']
 # %% ../notebooks/cli.ipynb 2
 from pathlib import Path
 from .notebook import Notebook
-
+import sys
+import contextlib
+import os
 
 def nbcleanse(**kwargs):
-    "Clean all notebooks in the current directory using the given parameters"    
-    for path in Path('.').glob('*.ipynb'):
-        nb = Notebook(path)
-        for k in kwargs:
-            getattr(nb, k)()
-        nb.save()
+    "Clean all notebooks in the current directory using the given parameters"            
+    quiet_context = contextlib.redirect_stdout(open(os.devnull, 'w')) if kwargs['quiet'] else contextlib.nullcontext()
+    with quiet_context:
+        for path in Path('.').glob('*.ipynb'):
+            nb = Notebook(path)        
+            if kwargs['clean_operations'] is not None:
+                print(f'🧼 Cleaning {path} ...')       
+                nb.clean(kwargs['clean_operations'])
+                nb.save()
+            else:
+                print(f'🧼 Checking {path} ...')       
+        print('✨ Done! ✨')
 
 # %% ../notebooks/cli.ipynb 3
 from argparse import ArgumentParser
+from .notebook import CleanOperations
 
-# using argparse rather than fastcore.script because it's possible to add single dash, concatable flags
 
 parser = ArgumentParser(prog='nbcleanse')
-parser.add_argument('-m', action='store_true', help='Preserve cells and notebook-wide metadata', dest='clean_all_metadata')
-parser.add_argument('-o', action='store_true', help='Preserve cells outputs', dest='clean_outputs')
+parser.add_argument('-m', action='append_const', help='Preserve cells and notebook-wide metadata', dest='clean_operations', const=CleanOperations.METADATA)
+parser.add_argument('-o', action='append_const', help='Preserve cells outputs', dest='clean_operations', const=CleanOperations.OUTPUTS)
+parser.add_argument('-q', action='store_true', help='Quiet mode', dest='quiet')
 
 def main():
     args = parser.parse_args()
