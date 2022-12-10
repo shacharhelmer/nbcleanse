@@ -14,14 +14,16 @@ def nbcleanse(**kwargs):
     "Clean all notebooks in the current directory using the given parameters"            
     quiet_context = contextlib.redirect_stdout(open(os.devnull, 'w')) if kwargs['quiet'] else contextlib.nullcontext()
     with quiet_context:
-        for path in Path('.').glob('*.ipynb'):
-            nb = Notebook(path)        
-            if kwargs['clean_operations'] is not None:
-                print(f'🧼 Cleaning {path} ...')       
-                nb.clean(kwargs['clean_operations'])
-                nb.save()
-            else:
-                print(f'🧼 Checking {path} ...')       
+        for glob in kwargs['find_globs']:
+            for path in Path('.').glob(glob):
+                nb = Notebook(path)                
+                if kwargs['clean_operations'] is not None:
+                    print(f'🧼 Cleaning {path} ...')   
+                    nb.clean(kwargs['clean_operations'])
+                    nb.save()
+                # TODO: enable check mode
+                # else:
+                #     print(f'🧼 Checking {path} ...')
         print('✨ Done! ✨')
 
 # %% ../notebooks/cli.ipynb 3
@@ -30,9 +32,11 @@ from .notebook import CleanOperations
 
 
 parser = ArgumentParser(prog='nbcleanse')
-parser.add_argument('-m', action='append_const', help='Preserve cells and notebook-wide metadata', dest='clean_operations', const=CleanOperations.METADATA)
-parser.add_argument('-o', action='append_const', help='Preserve cells outputs', dest='clean_operations', const=CleanOperations.OUTPUTS)
+parser.add_argument('-m', action='append_const', help='Clean cells and notebook-wide metadata', dest='clean_operations', const=CleanOperations.METADATA)
+parser.add_argument('-o', action='append_const', help='Clean cells outputs', dest='clean_operations', const=CleanOperations.OUTPUTS)
+parser.add_argument('-e', action='append_const', help='Clean cells execution counts', dest='clean_operations', const=CleanOperations.EXECUTION_COUNT)
 parser.add_argument('-q', action='store_true', help='Quiet mode', dest='quiet')
+parser.add_argument(nargs='*', help='Glob patterns (relative to cwd) of notebooks to filter', dest='find_globs', default=['*.ipynb'])
 
 def main():
     args = parser.parse_args()
