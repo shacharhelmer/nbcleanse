@@ -31,6 +31,11 @@ class Notebook:
     def clean_all_metadata(self):
         self.nb = self.apply_jq_pattern('.cells[].metadata = {}')
         self.nb = self.apply_jq_pattern('.metadata = {}')
+    
+    def clean_all(self):
+        self.clean_execution_counts()
+        self.clean_outputs()
+        self.clean_all_metadata()
         
     # TODO: circular dependency - notebooks.clean needs clean operations and vice versa
     def clean(self, clean_ops: Iterable[Enum]):        
@@ -48,4 +53,5 @@ class CleanOperations(Enum):
     METADATA = Notebook.clean_all_metadata.__name__
     OUTPUTS = Notebook.clean_outputs.__name__
     EXECUTION_COUNT = Notebook.clean_execution_counts.__name__
+    ALL = Notebook.clean_all.__name__ 
 
