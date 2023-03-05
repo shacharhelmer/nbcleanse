@@ -9,7 +9,7 @@ from nbformat import read as read_nb, write as write_nb, validate as validate_nb
 import jq
 
 # %% ../notebooks/nb_definition.ipynb 5
-from typing import Iterable
+from typing import Iterable, Union
 from enum import Enum
 
 DEFAULT_NB_METADATA = '{"kernelspec": {"language": "python"}}'
@@ -22,27 +22,30 @@ class Notebook:
         self.nb = read_nb(path, as_version=4)
 
     def apply_jq_pattern(self, pattern):
-        return from_dict(jq.compile(pattern).input(self.nb).first())
+        self.nb = from_dict(jq.compile(pattern).input(self.nb).first())
 
     def clean_execution_counts(self):
-        self.nb = self.apply_jq_pattern('.cells[].execution_count = null')
+        self.apply_jq_pattern('.cells[].execution_count = null')
         
     def clean_outputs(self):
-        self.nb = self.apply_jq_pattern('.cells[].outputs = []')
+        self.apply_jq_pattern('.cells[].outputs = []')
     
     def clean_all_metadata(self):
-        self.nb = self.apply_jq_pattern('.cells[].metadata = {}')
-        self.nb = self.apply_jq_pattern(f'.metadata = {DEFAULT_NB_METADATA}')
+        self.apply_jq_pattern('.cells[].metadata = {}')
+        self.apply_jq_pattern(f'.metadata = {DEFAULT_NB_METADATA}')
     
     def clean_all(self):
         self.clean_execution_counts()
         self.clean_outputs()
         self.clean_all_metadata()
         
-    # TODO: circular dependency - notebooks.clean needs clean operations and vice versa
-    def clean(self, clean_ops: Iterable[Enum]):        
+    # TODO: circular dependency - notebooks.clean needs CleanOperations enum and vice versa
+    def clean(self, clean_ops: Iterable[Union[Enum, tuple]]):
         for op in clean_ops:
-            getattr(self, op.value)()
+            if isinstance(op, Enum):
+                getattr(self, op.value)()
+            elif isinstance(op, tuple):
+                getattr(self, op[0].value)(*op[1])
         return self
         
     def save(self, path=None):
@@ -55,5 +58,6 @@ class CleanOperations(Enum):
     METADATA = Notebook.clean_all_metadata.__name__
     OUTPUTS = Notebook.clean_outputs.__name__
     EXECUTION_COUNT = Notebook.clean_execution_counts.__name__
+    CUSTOM_JQ = Notebook.apply_jq_pattern.__name__
     ALL = Notebook.clean_all.__name__ 
 

@@ -47,6 +47,7 @@ parser = ArgumentParser(prog='nbcleanse')
 parser.add_argument('-m', action='append_const', help='Clean cells and notebook-wide metadata', dest='clean_operations', const=CleanOperations.METADATA)
 parser.add_argument('-o', action='append_const', help='Clean cells outputs', dest='clean_operations', const=CleanOperations.OUTPUTS)
 parser.add_argument('-e', action='append_const', help='Clean cells execution counts', dest='clean_operations', const=CleanOperations.EXECUTION_COUNT)
+parser.add_argument('-a', action='append_const', help='Clean EVERYTHING from a notebook', dest='clean_operations', const=CleanOperations.ALL)
 parser.add_argument('-q', action='store_true', help='Quiet mode', dest='quiet')
 parser.add_argument(nargs='*', help='Glob patterns (relative to cwd) of notebooks to filter', dest='find_globs', default=['*.ipynb'])
 
